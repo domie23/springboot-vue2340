@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JuankuanxiangmDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.juankuanxiangm_name as juankuanxiangmName
+        ,a.juankuanxiangm_photo as juankuanxiangmPhoto
+        ,a.zhiyuanzhe_id as zhiyuanzheId
+        ,a.juankuanxiangm_types as juankuanxiangmTypes
+        ,a.juankuanxiangm_xuqiu as juankuanxiangmXuqiu
+        ,a.juankuanxiangm_qudao as juankuanxiangmQudao
+        ,a.juankuanxiangm_content as juankuanxiangmContent
+        ,a.juankuanxiangm_yesno_types as juankuanxiangmYesnoTypes
+        ,a.juankuanxiangm_yesno_text as juankuanxiangmYesnoText
+        ,a.juankuanxiangm_delete as juankuanxiangmDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JuankuanxiangmView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+        ,zhiyuanzhe.zhiyuanzhe_name as zhiyuanzheName
+        ,zhiyuanzhe.zhiyuanzhe_phone as zhiyuanzhePhone
+        ,zhiyuanzhe.zhiyuanzhe_id_number as zhiyuanzheIdNumber
+        ,zhiyuanzhe.zhiyuanzhe_photo as zhiyuanzhePhoto
+        ,zhiyuanzhe.zhiyuanzhe_email as zhiyuanzheEmail
+
+        FROM juankuanxiangm  a
+        left JOIN zhiyuanzhe zhiyuanzhe ON a.zhiyuanzhe_id = zhiyuanzhe.id
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.juankuanxiangmName != '' and params.juankuanxiangmName != null and params.juankuanxiangmName != 'null' ">
+                and a.juankuanxiangm_name like CONCAT('%',#{params.juankuanxiangmName},'%')
+            </if>
+            <if test="params.zhiyuanzheId != null and params.zhiyuanzheId != ''">
+                and (
+                    a.zhiyuanzhe_id = #{params.zhiyuanzheId}
+                )
+            </if>
+            <if test="params.juankuanxiangmTypes != null and params.juankuanxiangmTypes != ''">
+                and a.juankuanxiangm_types = #{params.juankuanxiangmTypes}
+            </if>
+            <if test="params.juankuanxiangmXuqiuStart != null and params.juankuanxiangmXuqiuStart != ''">
+                <![CDATA[  and a.juankuanxiangm_xuqiu >= #{params.juankuanxiangmXuqiuStart}   ]]>
+            </if>
+            <if test="params.juankuanxiangmXuqiuEnd != null and params.juankuanxiangmXuqiuEnd != ''">
+                <![CDATA[  and a.juankuanxiangm_xuqiu <= #{params.juankuanxiangmXuqiuEnd}   ]]>
+            </if>
+             <if test="params.juankuanxiangmXuqiu != null and params.juankuanxiangmXuqiu != ''">
+                and a.juankuanxiangm_xuqiu = #{params.juankuanxiangmXuqiu}
+             </if>
+            <if test=" params.juankuanxiangmQudao != '' and params.juankuanxiangmQudao != null and params.juankuanxiangmQudao != 'null' ">
+                and a.juankuanxiangm_qudao like CONCAT('%',#{params.juankuanxiangmQudao},'%')
+            </if>
+            <if test=" params.juankuanxiangmContent != '' and params.juankuanxiangmContent != null and params.juankuanxiangmContent != 'null' ">
+                and a.juankuanxiangm_content like CONCAT('%',#{params.juankuanxiangmContent},'%')
+            </if>
+            <if test="params.juankuanxiangmYesnoTypes != null and params.juankuanxiangmYesnoTypes != ''">
+                and a.juankuanxiangm_yesno_types = #{params.juankuanxiangmYesnoTypes}
+            </if>
+            <if test=" params.juankuanxiangmYesnoText != '' and params.juankuanxiangmYesnoText != null and params.juankuanxiangmYesnoText != 'null' ">
+                and a.juankuanxiangm_yesno_text like CONCAT('%',#{params.juankuanxiangmYesnoText},'%')
+            </if>
+            <if test="params.juankuanxiangmDeleteStart != null and params.juankuanxiangmDeleteStart != ''">
+                <![CDATA[  and a.juankuanxiangm_delete >= #{params.juankuanxiangmDeleteStart}   ]]>
+            </if>
+            <if test="params.juankuanxiangmDeleteEnd != null and params.juankuanxiangmDeleteEnd != ''">
+                <![CDATA[  and a.juankuanxiangm_delete <= #{params.juankuanxiangmDeleteEnd}   ]]>
+            </if>
+             <if test="params.juankuanxiangmDelete != null and params.juankuanxiangmDelete != ''">
+                and a.juankuanxiangm_delete = #{params.juankuanxiangmDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+                <!-- 判断志愿者的id不为空 -->
+            <if test=" params.zhiyuanzheIdNotNull != '' and params.zhiyuanzheIdNotNull != null and params.zhiyuanzheIdNotNull != 'null' ">
+                and a.zhiyuanzhe_id IS NOT NULL
+            </if>
+            <if test=" params.zhiyuanzheName != '' and params.zhiyuanzheName != null and params.zhiyuanzheName != 'null' ">
+                and zhiyuanzhe.zhiyuanzhe_name like CONCAT('%',#{params.zhiyuanzheName},'%')
+            </if>
+            <if test=" params.zhiyuanzhePhone != '' and params.zhiyuanzhePhone != null and params.zhiyuanzhePhone != 'null' ">
+                and zhiyuanzhe.zhiyuanzhe_phone like CONCAT('%',#{params.zhiyuanzhePhone},'%')
+            </if>
+            <if test=" params.zhiyuanzheIdNumber != '' and params.zhiyuanzheIdNumber != null and params.zhiyuanzheIdNumber != 'null' ">
+                and zhiyuanzhe.zhiyuanzhe_id_number like CONCAT('%',#{params.zhiyuanzheIdNumber},'%')
+            </if>
+            <if test=" params.zhiyuanzheEmail != '' and params.zhiyuanzheEmail != null and params.zhiyuanzheEmail != 'null' ">
+                and zhiyuanzhe.zhiyuanzhe_email like CONCAT('%',#{params.zhiyuanzheEmail},'%')
+            </if>
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
